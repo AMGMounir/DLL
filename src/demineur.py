@@ -17,8 +17,7 @@ class Demineur:
         while mines_placees < self.nombre_mines:
             x = random.randint(0, self.taille - 1)
             y = random.randint(0, self.taille - 1)
-            self.grille[y][x] = 'M'
-            mines_placees += 1
+
 
     def __calculer_indices(self):
         for y in range(self.taille):
@@ -59,13 +58,9 @@ class Demineur:
         """A Function to launch the game"""
         while True:
             self.afficher_grille()
-            x, y = map(int, input("Entrez les coordonnees x et y separees par un espace: ").split())
-            if self.grille[y][x] == 'M':
-                print("Perdu !")
 
-            self.decouvrir_cases(x, y)
-            if sum(row.count('.') for row in self.grille_visible) == self.nombre_mines:
-                print("Gagne !")
+
+
 
 
 if __name__ == "__main__":
