@@ -17,8 +17,10 @@ class Demineur:
         while mines_placees < self.nombre_mines:
             x = random.randint(0, self.taille - 1)
             y = random.randint(0, self.taille - 1)
-            self.grille[y][x] = 'M'
-            mines_placees += 1
+
+            if self.grille[y][x] != 'M':  # Pour ne pas placer deux mines au meme endroit
+                self.grille[y][x] = 'M'
+                mines_placees += 1
 
     def __calculer_indices(self):
         for y in range(self.taille):
@@ -39,6 +41,10 @@ class Demineur:
 
     def decouvrir_cases(self, x, y):
         """A Function to uncover a cell"""
+
+        #Evite d'etre en dehors de la grille
+        if x < 0 or y < 0 or x >= self.taille or y >= self.taille:
+            return
         if self.grille_visible[y][x] != '.':
             return
 
@@ -59,13 +65,38 @@ class Demineur:
         """A Function to launch the game"""
         while True:
             self.afficher_grille()
-            x, y = map(int, input("Entrez les coordonnees x et y separees par un espace: ").split())
-            if self.grille[y][x] == 'M':
-                print("Perdu !")
+            try:
+                user_input = input("Entrez les coordonnees x et y separees par un espace : ")
+                    
+                x, y = map(int, user_input.split())
+                
+                # verifie si les coordonnees sont dans la range de la grille
+                if x < 0 or y < 0 or x >= self.taille or y >= self.taille:
+                    print(f"Coordonnees invalides! Veuillez entrer des valeurs entre 0 et {self.taille-1}.")
+                    continue
+                    
+                # verifie si la case a deja ete decouverte
+                if self.grille_visible[y][x] != '.':
+                    print("Cette case a deja ete decouverte!")
+                    continue
+                
+                if self.grille[y][x] == 'M':
+                    print("Perdu !")
+                    for i in range(self.taille):
+                        for j in range(self.taille):
+                            if self.grille[i][j] == 'M':
+                                self.grille_visible[i][j] = 'M'
+                    self.afficher_grille()
+                    break
 
-            self.decouvrir_cases(x, y)
-            if sum(row.count('.') for row in self.grille_visible) == self.nombre_mines:
-                print("Gagne !")
+                self.decouvrir_cases(x, y)
+                if sum(row.count('.') for row in self.grille_visible) == self.nombre_mines:
+                    print("Gagne !")
+                    self.afficher_grille()
+                    break
+                    
+            except ValueError:
+                print("Entree invalide!")
 
 
 if __name__ == "__main__":
